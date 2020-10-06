@@ -4,6 +4,7 @@
 
     <string name="facebook_sign_in">Sign In With Facebook</string>
     <string name="twitter_sign_in">Sign In With Twitter</string>
+    <string name="google_sign_in">Sign In With Google</string>
 
     <string-array name="read_permissions">
         <item>email</item>

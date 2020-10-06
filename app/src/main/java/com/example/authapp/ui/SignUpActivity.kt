@@ -39,7 +39,7 @@ class SignUpActivity : AppCompatActivity() {
         for (i in 0..googleSignIn.childCount) {
             val view : View? = googleSignIn.getChildAt(i)
             if (view is TextView) {
-                view.text = "Sign In With Google"
+                view.text = resources.getString(R.string.google_sign_in)
                 view.isAllCaps = false
             }
         }
