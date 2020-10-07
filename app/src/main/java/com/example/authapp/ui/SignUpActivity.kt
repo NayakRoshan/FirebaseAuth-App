@@ -1,27 +1,44 @@
 package com.example.authapp.ui
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.authapp.R
+import com.example.authapp.handler.PreferenceHandler
+import com.example.authapp.newtorkOperation.FirebaseAuthOperation
+import com.example.authapp.repository.UserRepository
 import com.example.authapp.social.FacebookLoginProcedure
 import com.example.authapp.social.GoogleSignInProcedure
 import com.example.authapp.social.TwitterSignInProcedure
+import com.example.authapp.status.LoginStatus
+import com.example.authapp.usecase.GetCurrentUserUseCase
+import com.example.authapp.usecase.GetCurrentUserUseCaseImpl
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignUpActivity : AppCompatActivity() {
 
-    private val googleSignInProcedure : GoogleSignInProcedure by lazy { GoogleSignInProcedure(applicationContext) }
-    private val facebookLoginProcedure : FacebookLoginProcedure by lazy { FacebookLoginProcedure(applicationContext) }
-    private val twitterSignInProcedure : TwitterSignInProcedure by lazy { TwitterSignInProcedure(applicationContext) }
+    private lateinit var signInViewModel: SignInViewModel
+    private lateinit var googleClient : GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
+        initializeViewModelAndObservers()
+        attachProcedureStateListener()
         setGoogleSignInClient()
         setSignInButtons()
     }
@@ -31,8 +48,20 @@ class SignUpActivity : AppCompatActivity() {
         customizeGoogleSignInButton()
     }
 
+    private fun initializeViewModelAndObservers() {
+        signInViewModel = ViewModelProvider(this).get(SignInViewModel::class.java)
+
+        signInViewModel.signInStatus.observe(this, Observer { status ->
+            processBasedOnCurrentStatus(status)
+        })
+    }
+
+    private fun attachProcedureStateListener() {
+        signInViewModel.attachStateListeners()
+    }
+
     private fun setGoogleSignInClient() {
-        googleSignInProcedure.setGoogleSignInClient()
+        googleClient = GoogleSignInProcedure.googleClient
     }
 
     private fun customizeGoogleSignInButton() {
@@ -47,17 +76,25 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun setSignInButtons() {
         googleSignIn.setOnClickListener {
-            val gMailOptionsIntent = googleSignInProcedure.getSignInIntent()
-            startActivityForResult(gMailOptionsIntent, GoogleSignInProcedure.GOOGLE_RETURN_CODE)
+            val preferenceHandler = PreferenceHandler(this)
+            preferenceHandler.setUserAuthProvider(PreferenceHandler.GOOGLE_AUTH_PROVIDER)
+            startActivityForResult(
+                signInViewModel.googleSignInIntent(googleClient),
+                GoogleSignInProcedure.GOOGLE_RETURN_CODE
+            )
         }
 
         facebookLogin.setOnClickListener {
             signInProgress.visibility = View.VISIBLE
-            facebookLoginProcedure.setUpFacebookLogin(this, signInProgress)
+            val preferenceHandler = PreferenceHandler(this)
+            preferenceHandler.setUserAuthProvider(PreferenceHandler.FACEBOOK_AUTH_PROVIDER)
+            signInViewModel.startFacebookLoginProcess(this)
         }
 
         twitterSignIn.setOnClickListener {
-            twitterSignInProcedure.signInWithTwitter(this)
+            val preferenceHandler = PreferenceHandler(this)
+            preferenceHandler.setUserAuthProvider(PreferenceHandler.TWITTER_AUTH_PROVIDER)
+            signInViewModel.startTwitterSignInProcess(this)
         }
     }
 
@@ -67,17 +104,37 @@ class SignUpActivity : AppCompatActivity() {
         when (requestCode) {
             GoogleSignInProcedure.GOOGLE_RETURN_CODE -> {
                 signInProgress.visibility = View.VISIBLE
-                val task = googleSignInProcedure.getGoogleSignInTask(data)
-                try {
-                    val account = googleSignInProcedure.getSignedInAccount(task)
-                    googleSignInProcedure.firebaseAuthGoogleSignIn(account, signInProgress)
-                } catch (error : ApiException) {
-                    googleSignInProcedure.onSignInFailed(signInProgress)
-                }
+                signInViewModel.processGoogleOnActivityResult(data)
             }
             else -> {
-                Log.d("Facebooks", "Calling On Activity Result.")
-                facebookLoginProcedure.callOnActivityResult(requestCode, resultCode, data!!)
+                signInViewModel.processFacebookOnActivityResult(requestCode, resultCode, data)
+            }
+        }
+    }
+
+    private fun processBasedOnCurrentStatus(status : String) {
+        when(status) {
+            LoginStatus.PROVIDER_CANCEL.name -> {
+                signInProgress.visibility = View.GONE
+                Toast.makeText(this, resources.getString(R.string.cancel_sign_in), Toast.LENGTH_SHORT).show()
+            }
+            LoginStatus.PROVIDER_ERROR.name -> {
+                signInProgress.visibility = View.GONE
+                Toast.makeText(this, resources.getString(R.string.provider_error_message), Toast.LENGTH_SHORT).show()
+            }
+            LoginStatus.FIREBASE_ERROR.name -> {
+                signInProgress.visibility = View.GONE
+                Toast.makeText(this, resources.getString(R.string.firebase_error_message), Toast.LENGTH_SHORT).show()
+            }
+            LoginStatus.FIREBASE_SUCCESS.name -> {
+                val callUserDashboardIntent = Intent(this, UserDashboardActivity::class.java)
+                val getCurrentUser : GetCurrentUserUseCase = GetCurrentUserUseCaseImpl(UserRepository(FirebaseAuthOperation()))
+                val currentUser = getCurrentUser.getCurrentUser()
+                callUserDashboardIntent.putExtra(resources.getString(R.string.user_name), currentUser.displayName)
+                callUserDashboardIntent.putExtra(resources.getString(R.string.user_email), currentUser.email)
+                signInProgress.visibility = View.GONE
+                startActivity(callUserDashboardIntent)
+                finish()
             }
         }
     }

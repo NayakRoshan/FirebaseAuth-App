@@ -25,4 +25,5 @@
     <string name="firebase_error_message">Authentication failed.</string>
     <string name="sign_out_message">Signed Out Successfully.</string>
     <string name="cancel_sign_in">Sign in cancelled.</string>
+    <string name="sign_out_error">Couldnt Sign Out.</string>
 </resources>

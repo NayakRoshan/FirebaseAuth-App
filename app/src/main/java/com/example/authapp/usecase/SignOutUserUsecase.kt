@@ -1,8 +1,6 @@
 package com.example.authapp.usecase
 
-import android.content.Context
-import android.widget.Toast
-import com.example.authapp.R
+import android.util.Log
 import com.example.authapp.handler.PreferenceHandler
 import com.example.authapp.repository.UserRepository
 import com.example.authapp.social.FacebookLoginProcedure
@@ -14,28 +12,24 @@ interface SignOutUserUseCase {
 }
 
 class SignOutUserUseCaseImpl(
-    private val context: Context,
     private val userRepository: UserRepository,
     private val preferenceHandler: PreferenceHandler
 ) : SignOutUserUseCase {
     override fun signOutUser() : Boolean {
         return try {
             if (preferenceHandler.getUserAuthProvider() == PreferenceHandler.GOOGLE_AUTH_PROVIDER) {
-                val googleSignInProcedure = GoogleSignInProcedure(context)
-                googleSignInProcedure.setGoogleSignInClient()
                 userRepository.signOutUser()
-                googleSignInProcedure.getGoogleSignInClient().signOut()
+                GoogleSignInProcedure.googleClient.signOut()
             } else if (preferenceHandler.getUserAuthProvider() == PreferenceHandler.FACEBOOK_AUTH_PROVIDER) {
-                val facebookLoginProcedure = FacebookLoginProcedure(context)
+                val facebookLoginProcedure = FacebookLoginProcedure()
                 userRepository.signOutUser()
                 facebookLoginProcedure.logOutUser()
             } else if (preferenceHandler.getUserAuthProvider() == PreferenceHandler.TWITTER_AUTH_PROVIDER) {
                 userRepository.signOutUser()
             }
-            Toast.makeText(context, context.resources.getString(R.string.sign_out_message), Toast.LENGTH_SHORT).show()
             true
         } catch (error : Exception) {
-            Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+            Log.d("Sign Out", error.message as String)
             false
         }
     }
