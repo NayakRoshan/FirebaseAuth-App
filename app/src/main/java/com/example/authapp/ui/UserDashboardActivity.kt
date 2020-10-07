@@ -27,17 +27,7 @@ class UserDashboardActivity : AppCompatActivity() {
 
     private fun setSignOutButton() {
         signOutButton.setOnClickListener {
-            val signOutUserUseCase : SignOutUserUseCase =
-                SignOutUserUseCaseImpl(UserRepository(FirebaseAuthOperation()), PreferenceHandler(this))
-            val status : Boolean = signOutUserUseCase.signOutUser()
-            if (status) {
-                val callSignInActivity = Intent(this, SignUpActivity::class.java)
-                Toast.makeText(this, resources.getString(R.string.sign_out_message), Toast.LENGTH_SHORT).show()
-                startActivity(callSignInActivity)
-                finish()
-            } else {
-                Toast.makeText(this, resources.getString(R.string.sign_out_error), Toast.LENGTH_SHORT).show()
-            }
+            SignOutUser.signOutUser(this)
         }
     }
 
