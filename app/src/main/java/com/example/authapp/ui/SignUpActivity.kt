@@ -1,32 +1,22 @@
 package com.example.authapp.ui
 
-import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.authapp.R
 import com.example.authapp.handler.PreferenceHandler
 import com.example.authapp.newtorkOperation.FirebaseAuthOperation
 import com.example.authapp.repository.UserRepository
-import com.example.authapp.social.FacebookLoginProcedure
 import com.example.authapp.social.GoogleSignInProcedure
-import com.example.authapp.social.TwitterSignInProcedure
 import com.example.authapp.status.LoginStatus
 import com.example.authapp.usecase.GetCurrentUserUseCase
 import com.example.authapp.usecase.GetCurrentUserUseCaseImpl
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignUpActivity : AppCompatActivity() {

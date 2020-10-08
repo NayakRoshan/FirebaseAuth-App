@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
 class GoogleSignInProcedure {
-//private val stateChangesListener: StateChangesListener
+
     companion object {
         val GOOGLE_RETURN_CODE = 100
         lateinit var googleClient : GoogleSignInClient
