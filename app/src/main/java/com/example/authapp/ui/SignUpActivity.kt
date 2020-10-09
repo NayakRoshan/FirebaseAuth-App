@@ -16,13 +16,12 @@ import com.example.authapp.social.GoogleSignInProcedure
 import com.example.authapp.status.LoginStatus
 import com.example.authapp.usecase.GetCurrentUserUseCase
 import com.example.authapp.usecase.GetCurrentUserUseCaseImpl
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var signInViewModel: SignInViewModel
-    private lateinit var googleClient : GoogleSignInClient
+    private val readPermissions : List<String> = listOf("email", "public_profile")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +50,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun setGoogleSignInClient() {
-        googleClient = GoogleSignInProcedure.googleClient
+        signInViewModel.setUpGoogleClient(applicationContext)
     }
 
     private fun customizeGoogleSignInButton() {
@@ -69,7 +68,7 @@ class SignUpActivity : AppCompatActivity() {
             val preferenceHandler = PreferenceHandler(this)
             preferenceHandler.setUserAuthProvider(PreferenceHandler.GOOGLE_AUTH_PROVIDER)
             startActivityForResult(
-                signInViewModel.googleSignInIntent(googleClient),
+                signInViewModel.googleSignInIntent(),
                 GoogleSignInProcedure.GOOGLE_RETURN_CODE
             )
         }
@@ -78,7 +77,7 @@ class SignUpActivity : AppCompatActivity() {
             signInProgress.visibility = View.VISIBLE
             val preferenceHandler = PreferenceHandler(this)
             preferenceHandler.setUserAuthProvider(PreferenceHandler.FACEBOOK_AUTH_PROVIDER)
-            signInViewModel.startFacebookLoginProcess(this)
+            signInViewModel.startFacebookLoginProcess(this, readPermissions)
         }
 
         twitterSignIn.setOnClickListener {

@@ -15,16 +15,14 @@ class FacebookLoginProcedure {
 
     private val managerCallback : CallbackManager by lazy { CallbackManager.Factory.create() }
     private val firebaseAuth : FirebaseAuth by lazy { FirebaseAuth.getInstance() }
-    private lateinit var readPermissions : Array<String>
     private lateinit var stateChangesListener : StateChangesListener
 
     fun getStateListener(listener : StateChangesListener) {
         stateChangesListener = listener
     }
 
-    fun startFacebookLogin(activity : Activity) {
-        readPermissions = activity.resources.getStringArray(R.array.read_permissions)
-        LoginManager.getInstance().logInWithReadPermissions(activity, readPermissions.asList())
+    fun startFacebookLogin(activity : Activity, readPermissions : List<String>) {
+        LoginManager.getInstance().logInWithReadPermissions(activity, readPermissions)
         LoginManager.getInstance().registerCallback(managerCallback, object :
             FacebookCallback<LoginResult> {
             override fun onSuccess(result: LoginResult?) {

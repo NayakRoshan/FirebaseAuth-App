@@ -6,11 +6,6 @@
     <string name="twitter_sign_in">Sign In With Twitter</string>
     <string name="google_sign_in">Sign In With Google</string>
 
-    <string-array name="read_permissions">
-        <item>email</item>
-        <item>public_profile</item>
-    </string-array>
-
     <string name="facebook_app_id">2729197324005267</string>
     <string name="fb_login_protocol_scheme">fb2729197324005267</string>
 

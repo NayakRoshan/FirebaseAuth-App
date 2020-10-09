@@ -1,6 +1,7 @@
 package com.example.authapp.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -29,7 +30,11 @@ class SignInViewModel : ViewModel(),
         twitterSignInProcedure.getStateListener(this)
     }
 
-    fun googleSignInIntent(googleClient : GoogleSignInClient) : Intent = googleSignInProcedure.getSignInIntent(googleClient)
+    fun setUpGoogleClient(applicationContext: Context) {
+        googleSignInProcedure.setGoogleClient(applicationContext)
+    }
+
+    fun googleSignInIntent() : Intent = googleSignInProcedure.getSignInIntent()
 
     fun processGoogleOnActivityResult(data : Intent?) {
         val task = googleSignInProcedure.getGoogleSignInTask(data)
@@ -41,8 +46,8 @@ class SignInViewModel : ViewModel(),
         }
     }
 
-    fun startFacebookLoginProcess(activity: Activity) {
-        facebookLoginProcedure.startFacebookLogin(activity)
+    fun startFacebookLoginProcess(activity: Activity, readPermissions : List<String>) {
+        facebookLoginProcedure.startFacebookLogin(activity, readPermissions)
     }
 
     fun processFacebookOnActivityResult(

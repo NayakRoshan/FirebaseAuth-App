@@ -26,8 +26,6 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         Handler().postDelayed({
-            val googleClient = GoogleSignIn.getClient(applicationContext, setGoogleSignInConfig())
-            GoogleSignInProcedure.googleClient = googleClient
             val loginStatus : GetLoginStatusUseCase =
                 GetLoginStatusUseCaseImpl(UserRepository(FirebaseAuthOperation()))
             val intent = if (loginStatus.loginStatus()) {
@@ -47,11 +45,4 @@ class SplashActivity : AppCompatActivity() {
         }, SPLASH_DELAY_TIME)
     }
 
-    private fun setGoogleSignInConfig() : GoogleSignInOptions {
-        return GoogleSignInOptions
-            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .requestIdToken(this.getString(R.string.web_client_id))
-            .build()
-    }
 }
