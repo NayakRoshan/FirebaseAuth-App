@@ -14,7 +14,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
-class GoogleSignInProcedure {
+class GoogleSignInProcedure(private val applicationContext: Context) {
 
     companion object {
         val GOOGLE_RETURN_CODE = 100
@@ -28,7 +28,7 @@ class GoogleSignInProcedure {
         stateChangesListener = listener
     }
 
-    private fun setGoogleSignInConfig(applicationContext: Context) : GoogleSignInOptions {
+    private fun setGoogleSignInConfig() : GoogleSignInOptions {
         return GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
@@ -36,8 +36,8 @@ class GoogleSignInProcedure {
             .build()
     }
 
-    fun setGoogleClient(applicationContext: Context) {
-        val googleClient = GoogleSignIn.getClient(applicationContext, setGoogleSignInConfig(applicationContext))
+    fun setGoogleClient() {
+        val googleClient = GoogleSignIn.getClient(applicationContext, setGoogleSignInConfig())
         GoogleSignInProcedure.googleClient = googleClient
     }
 

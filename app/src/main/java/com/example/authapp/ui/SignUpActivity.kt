@@ -50,7 +50,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun setGoogleSignInClient() {
-        signInViewModel.setUpGoogleClient(applicationContext)
+        signInViewModel.setUpGoogleClient()
     }
 
     private fun customizeGoogleSignInButton() {

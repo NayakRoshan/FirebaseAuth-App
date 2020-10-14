@@ -1,8 +1,10 @@
 package com.example.authapp.ui
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.Intent
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,10 +16,11 @@ import com.example.authapp.status.LoginStatus
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 
-class SignInViewModel : ViewModel(),
+class SignInViewModel(application: Application) : AndroidViewModel(application),
     StateChangesListener {
 
-    private val googleSignInProcedure : GoogleSignInProcedure by lazy { GoogleSignInProcedure() }
+    private val context : Context by lazy { getApplication<Application>().applicationContext }
+    private val googleSignInProcedure : GoogleSignInProcedure by lazy { GoogleSignInProcedure(context) }
     private val facebookLoginProcedure : FacebookLoginProcedure by lazy { FacebookLoginProcedure() }
     private val twitterSignInProcedure : TwitterSignInProcedure by lazy { TwitterSignInProcedure() }
 
@@ -30,8 +33,8 @@ class SignInViewModel : ViewModel(),
         twitterSignInProcedure.getStateListener(this)
     }
 
-    fun setUpGoogleClient(applicationContext: Context) {
-        googleSignInProcedure.setGoogleClient(applicationContext)
+    fun setUpGoogleClient() {
+        googleSignInProcedure.setGoogleClient()
     }
 
     fun googleSignInIntent() : Intent = googleSignInProcedure.getSignInIntent()
