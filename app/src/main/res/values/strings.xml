@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">AuthApp</string>
+    <string name="sign_out">Sign Out</string>
+
+    <string name="facebook_sign_in">Sign In With Facebook</string>
+    <string name="twitter_sign_in">Sign In With Twitter</string>
+    <string name="google_sign_in">Sign In With Google</string>
+
+    <string name="facebook_app_id">2729197324005267</string>
+    <string name="fb_login_protocol_scheme">fb2729197324005267</string>
+
+    <string name="android_client_id">588568200030-8hf9bud7953nt42af0scaiqepheibd5p.apps.googleusercontent.com</string>
+    <string name="web_client_id">588568200030-6pp7hohvd868rlrq2bfsf3od9dt1dluf.apps.googleusercontent.com</string>
+
+    <string name="user_name">User Name</string>
+    <string name="user_email">User Email</string>
+
+    <string name="success_message">Sign In Successful.</string>
+    <string name="provider_error_message">Sign In Failed.</string>
+    <string name="firebase_error_message">Authentication failed.</string>
+    <string name="sign_out_message">Signed Out Successfully.</string>
+    <string name="cancel_sign_in">Sign in cancelled.</string>
+    <string name="sign_out_error">Couldnt Sign Out.</string>
 </resources>
